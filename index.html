@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Be My Valentine, Kendall? 💕</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Heart icon component
+        const Heart = ({ className, style }) => (
+            <svg
+                className={className}
+                style={style}
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            >
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+        );
+
+        function ValentineProposal() {
+            const [answered, setAnswered] = useState(false);
+            const [noButtonPosition, setNoButtonPosition] = useState({ x: 0, y: 0 });
+            const [yesButtonScale, setYesButtonScale] = useState(1);
+            const [attemptCount, setAttemptCount] = useState(0);
+            const [showConfetti, setShowConfetti] = useState(false);
+
+            const pleadingMessages = [
+                "Kendall, will you be my Valentine?",
+                "Are you sure? 🥺",
+                "Pretty please? 💕",
+                "Just give me a chance! 💝",
+                "Come on, you know you want to say yes! 💗",
+                "I'll be really sad if you say no... 😢",
+                "Think about all the fun we'll have! 🎉",
+                "You're making this difficult... 💔",
+                "Final chance... please? 🙏"
+            ];
+
+            const [messageIndex, setMessageIndex] = useState(0);
+
+            const moveNoButton = () => {
+                const maxX = window.innerWidth - 150;
+                const maxY = window.innerHeight - 80;
+                
+                const newX = Math.random() * maxX;
+                const newY = Math.random() * maxY;
+                
+                setNoButtonPosition({ x: newX, y: newY });
+                setYesButtonScale(prev => prev + 0.15);
+                setAttemptCount(prev => prev + 1);
+                
+                if (messageIndex < pleadingMessages.length - 1) {
+                    setMessageIndex(prev => prev + 1);
+                }
+            };
+
+            const handleYes = () => {
+                setAnswered(true);
+                setShowConfetti(true);
+            };
+
+            useEffect(() => {
+                if (showConfetti) {
+                    createConfetti();
+                }
+            }, [showConfetti]);
+
+            const createConfetti = () => {
+                const duration = 3000;
+                const animationEnd = Date.now() + duration;
+                const colors = ['#ff1744', '#f50057', '#ff4081', '#ff80ab', '#ff1744'];
+
+                const confettiInterval = setInterval(() => {
+                    const timeLeft = animationEnd - Date.now();
+
+                    if (timeLeft <= 0) {
+                        clearInterval(confettiInterval);
+                        return;
+                    }
+
+                    const particleCount = 3;
+                    
+                    for (let i = 0; i < particleCount; i++) {
+                        createConfettiPiece(colors[Math.floor(Math.random() * colors.length)]);
+                    }
+                }, 50);
+            };
+
+            const createConfettiPiece = (color) => {
+                const confetti = document.createElement('div');
+                confetti.style.position = 'fixed';
+                confetti.style.width = '10px';
+                confetti.style.height = '10px';
+                confetti.style.backgroundColor = color;
+                confetti.style.left = Math.random() * window.innerWidth + 'px';
+                confetti.style.top = '-10px';
+                confetti.style.opacity = '1';
+                confetti.style.transform = 'rotate(' + Math.random() * 360 + 'deg)';
+                confetti.style.transition = 'all 3s ease-out';
+                confetti.style.pointerEvents = 'none';
+                confetti.style.zIndex = '9999';
+                
+                document.body.appendChild(confetti);
+
+                setTimeout(() => {
+                    confetti.style.top = window.innerHeight + 'px';
+                    confetti.style.left = (parseFloat(confetti.style.left) + (Math.random() - 0.5) * 200) + 'px';
+                    confetti.style.opacity = '0';
+                    confetti.style.transform = 'rotate(' + (Math.random() * 720) + 'deg)';
+                }, 10);
+
+                setTimeout(() => {
+                    document.body.removeChild(confetti);
+                }, 3000);
+            };
+
+            if (answered) {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-pink-400 via-red-400 to-pink-500 flex items-center justify-center p-4 overflow-hidden">
+                        <div className="text-center animate-pulse">
+                            <div className="mb-8 flex justify-center gap-4">
+                                <Heart className="w-16 h-16 text-white fill-white animate-bounce" />
+                                <Heart className="w-20 h-20 text-white fill-white animate-bounce" style={{ animationDelay: '0.1s' }} />
+                                <Heart className="w-16 h-16 text-white fill-white animate-bounce" style={{ animationDelay: '0.2s' }} />
+                            </div>
+                            
+                            <h1 className="text-6xl md:text-8xl font-bold text-white mb-6 drop-shadow-lg">
+                                Yay! 🎉
+                            </h1>
+                            
+                            <p className="text-3xl md:text-4xl text-white font-semibold mb-4">
+                                I knew you'd say yes!
+                            </p>
+                            
+                            <p className="text-xl md:text-2xl text-white/90 max-w-2xl mx-auto">
+                                This Valentine's Day is going to be amazing! 💕
+                            </p>
+                            
+                            <div className="mt-12 flex justify-center gap-3">
+                                {[...Array(5)].map((_, i) => (
+                                    <Heart 
+                                        key={i} 
+                                        className="w-12 h-12 text-white fill-white animate-pulse" 
+                                        style={{ animationDelay: `${i * 0.2}s` }}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-pink-300 via-red-300 to-pink-400 flex items-center justify-center p-4 relative overflow-hidden">
+                    {/* Floating hearts background */}
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                        {[...Array(15)].map((_, i) => (
+                            <Heart
+                                key={i}
+                                className="absolute text-white/20 fill-white/20 animate-pulse"
+                                style={{
+                                    width: `${Math.random() * 40 + 20}px`,
+                                    height: `${Math.random() * 40 + 20}px`,
+                                    left: `${Math.random() * 100}%`,
+                                    top: `${Math.random() * 100}%`,
+                                    animationDelay: `${Math.random() * 2}s`,
+                                    animationDuration: `${Math.random() * 3 + 2}s`
+                                }}
+                            />
+                        ))}
+                    </div>
+
+                    <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 md:p-12 max-w-2xl w-full text-center relative z-10">
+                        <div className="mb-8">
+                            <Heart className="w-20 h-20 text-red-500 fill-red-500 mx-auto mb-6 animate-pulse" />
+                        </div>
+
+                        <h1 className="text-4xl md:text-6xl font-bold text-gray-800 mb-8 leading-tight">
+                            {pleadingMessages[messageIndex]}
+                        </h1>
+
+                        {attemptCount > 3 && (
+                            <p className="text-lg text-gray-600 mb-6 italic">
+                                (You've tried to say no {attemptCount} times... maybe it's a sign? 😉)
+                            </p>
+                        )}
+
+                        <div className="flex flex-col items-center gap-6 mt-12 relative">
+                            <button
+                                onClick={handleYes}
+                                className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-bold py-4 px-12 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                                style={{
+                                    fontSize: `${16 + yesButtonScale * 4}px`,
+                                    transform: `scale(${yesButtonScale})`
+                                }}
+                            >
+                                Yes! 💕
+                            </button>
+
+                            <button
+                                onMouseEnter={moveNoButton}
+                                onClick={moveNoButton}
+                                className="bg-gray-400 hover:bg-gray-500 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-200"
+                                style={{
+                                    position: attemptCount > 0 ? 'fixed' : 'relative',
+                                    left: attemptCount > 0 ? `${noButtonPosition.x}px` : 'auto',
+                                    top: attemptCount > 0 ? `${noButtonPosition.y}px` : 'auto',
+                                    transition: 'all 0.3s ease-out'
+                                }}
+                            >
+                                No
+                            </button>
+                        </div>
+
+                        {attemptCount > 5 && (
+                            <p className="text-sm text-gray-500 mt-8 italic">
+                                Hint: The "No" button is very shy... maybe just click "Yes"? 😊
+                            </p>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<ValentineProposal />, document.getElementById('root'));
+    </script>
+</body>
+</html>
